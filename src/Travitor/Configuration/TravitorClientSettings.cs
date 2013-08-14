@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace Travitor.Configuration.Settings {
-    public class TravitorClientSettings : ITravitorClientSettings {
+namespace Travitor.Configuration {
+    internal class TravitorClientSettings : ITravitorClientSettings {
         private static Lazy<TravitorClientSettings> _default = new Lazy<TravitorClientSettings>(() => {
             return new TravitorClientSettings {
                 Address = new Uri("https://api.travitor.com/api"),

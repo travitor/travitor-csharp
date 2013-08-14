@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -53,6 +54,10 @@ namespace Travitor {
 
         internal static JWTSecurityToken AsSecurityToken(this AssertionCredential self) {
             return new JWTSecurityToken(self.Assertion);
+        }
+
+        internal static void Accept(this HttpRequestHeaders self, string mediaType) {
+            self.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType));
         }
     }
 }

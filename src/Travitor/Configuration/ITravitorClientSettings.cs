@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Travitor.Configuration.Settings {
+namespace Travitor.Configuration {
     public interface ITravitorClientSettings {
         Uri Address { get; }
         Uri Tenant { get; }

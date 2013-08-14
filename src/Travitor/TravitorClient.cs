@@ -1,29 +1,42 @@
-﻿using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
+﻿using Microsoft.IdentityModel.Tokens.JWT;
+using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
 using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Travitor.Configuration;
-using Travitor.Configuration.Configurators;
-using Travitor.Configuration.Settings;
 
 namespace Travitor {
     public class TravitorClient : IDisposable {
+        static TravitorClient() {
+            ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
+        }
+
         private CookieContainer _cookies = new CookieContainer();
         private HttpClient _client;
         private HttpMessageHandler _handler;
         private bool _disposed;
         private string _username;
-        private SecureString _password;
+        private string _password;
         private Uri _address;
         private Uri _tenant;
         private Uri _realm;
         private string _provider;
         private AuthenticationContext _context;
         private AssertionCredential _credential;
+
+        public static TravitorClient New(Action<ITravitorClientConfigurator> configure = null) {
+            var configurator = new TravitorClientConfigurator();
+
+            if (configure != null) {
+                configure(configurator);
+            }
+
+            return new TravitorClient(configurator.Settings);
+        }
 
         public TravitorClient(ITravitorClientSettings settings)
             : this(settings.Address, settings.Tenant, settings.Realm, settings.Provider, settings.Username, settings.Password) {
@@ -35,7 +48,7 @@ namespace Travitor {
             _realm = realm;
             _provider = provider;
             _username = username;
-            _password = password.Secure();
+            _password = password;
 
             _handler = new HttpClientHandler {
                 UseCookies = true,
@@ -46,6 +59,7 @@ namespace Travitor {
             _client = new HttpClient(_handler) {
                 BaseAddress = address
             };
+            _client.DefaultRequestHeaders.Accept("application/vnd.siren+json");
         }
 
         ~TravitorClient() {
@@ -80,38 +94,37 @@ namespace Travitor {
             _disposed = true;
         }
 
-        public Task<HttpResponseMessage> LoginAsync() {
-            return LoginAsync(_username, _password.Unsecure());
+        public Task LoginAsync() {
+            return LoginAsync(_username, _password);
         }
 
-        public Task<HttpResponseMessage> LoginAsync(string username, string password) {
-            Contract.Requires<ArgumentException>(username.IsNotNullOrEmpty());
-            Contract.Requires<ArgumentException>(password.IsNotNullOrEmpty());
+        public async Task LoginAsync(string username, string password) {
+            const string Scheme = "Bearer";
 
-            _context = new AuthenticationContext(Tenant.ToString());
+            await Task.Run(() => {
+                _context = new Microsoft.WindowsAzure.ActiveDirectory.Authentication.AuthenticationContext(Tenant.ToString());
 
-            var providers = _context.GetProviders(Realm);
-            var provider = providers.First(x => x.Name.Equals(Provider, StringComparison.InvariantCultureIgnoreCase));
+                var providers = _context.GetProviders(Realm);
+                var identity = providers.First(x => x.Name.Equals(Provider, StringComparison.InvariantCultureIgnoreCase));
 
-            var credential = new UsernamePasswordCredential(provider.Name, _username, _password.Unsecure());
+                var credential = new UsernamePasswordCredential(identity.Name, username, password);
 
-            _credential = _context.AcquireToken(Realm, provider, credential);
+                _credential = _context.AcquireToken(Realm, identity, credential);
 
-            var token = _credential.AsSecurityToken();
-            var header = _credential.CreateAuthorizationHeader();
+                var token = _credential.AsSecurityToken();
+                var header = _credential.CreateAuthorizationHeader();
 
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Scheme, _credential.Assertion);
+
+            }).ConfigureAwait(false);
+        }
+
+        public Task LogoutAsync() {
             return null;
         }
 
-        public Task<HttpResponseMessage> LogoutAsync() {
-            return null;
-        }
+        public Task<string> GetApiAsync() {
 
-        public static TravitorClient New(Action<ITravitorClientConfigurator> configure) {
-            var configurator = new TravitorClientConfigurator();
-            configure(configurator);
-
-            return new TravitorClient(configurator.Settings);
         }
-    }    
+    }
 }
