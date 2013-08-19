@@ -12,6 +12,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{076782
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{91345708-4C1D-44EC-9635-684E75B96043}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrap.Net.Http.Siren", "..\..\Migrap\src\Migrap.Net.Http.Siren\Migrap.Net.Http.Siren.csproj", "{805F661A-FCCC-41B0-8D56-1437C635E634}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrap.Net.Http", "..\..\Migrap\src\Migrap.Net.Http\Migrap.Net.Http.csproj", "{D95294A6-6C1E-4562-8F19-D05C2BAB3DCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrap.Net.Http.Representers", "..\..\Migrap\src\Migrap.Net.Http.Representers\Migrap.Net.Http.Representers.csproj", "{4B91CB0C-BB1A-48B7-8D60-1D0895D7F63D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrap.Web.Http", "..\..\Migrap\src\Migrap.Web.Http\Migrap.Web.Http.csproj", "{35C52004-B45E-4DF6-B67C-C28161EDF28F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +34,22 @@ Global
 		{91345708-4C1D-44EC-9635-684E75B96043}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91345708-4C1D-44EC-9635-684E75B96043}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91345708-4C1D-44EC-9635-684E75B96043}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805F661A-FCCC-41B0-8D56-1437C635E634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805F661A-FCCC-41B0-8D56-1437C635E634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805F661A-FCCC-41B0-8D56-1437C635E634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805F661A-FCCC-41B0-8D56-1437C635E634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95294A6-6C1E-4562-8F19-D05C2BAB3DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95294A6-6C1E-4562-8F19-D05C2BAB3DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95294A6-6C1E-4562-8F19-D05C2BAB3DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95294A6-6C1E-4562-8F19-D05C2BAB3DCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B91CB0C-BB1A-48B7-8D60-1D0895D7F63D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B91CB0C-BB1A-48B7-8D60-1D0895D7F63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B91CB0C-BB1A-48B7-8D60-1D0895D7F63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B91CB0C-BB1A-48B7-8D60-1D0895D7F63D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35C52004-B45E-4DF6-B67C-C28161EDF28F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C52004-B45E-4DF6-B67C-C28161EDF28F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C52004-B45E-4DF6-B67C-C28161EDF28F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C52004-B45E-4DF6-B67C-C28161EDF28F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

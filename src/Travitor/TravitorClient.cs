@@ -1,10 +1,14 @@
 ﻿using Microsoft.IdentityModel.Tokens.JWT;
 using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
+using Migrap.Net.Http.Formatting;
+using Migrap.Net.Http.Siren.Models;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Travitor.Configuration;
@@ -27,6 +31,7 @@ namespace Travitor {
         private string _provider;
         private AuthenticationContext _context;
         private AssertionCredential _credential;
+        private MediaTypeFormatterCollection _formatters = new MediaTypeFormatterCollection();
 
         public static TravitorClient New(Action<ITravitorClientConfigurator> configure = null) {
             var configurator = new TravitorClientConfigurator();
@@ -59,7 +64,10 @@ namespace Travitor {
             _client = new HttpClient(_handler) {
                 BaseAddress = address
             };
+
+            _client.DefaultRequestHeaders.Version("1");
             _client.DefaultRequestHeaders.Accept("application/vnd.siren+json");
+            _formatters.Add(new SirenMediaTypeFormatter());
         }
 
         ~TravitorClient() {
@@ -123,8 +131,35 @@ namespace Travitor {
             return null;
         }
 
-        public Task<string> GetApiAsync() {
+        public Task<string> GetStringAsync(string value = "courses") {
+            var request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri("/api/" + value, UriKind.Relative)
+            };
 
+            return _client.SendAsync(request)
+                .ContinueWith(x => x.Result.Content.ReadAsStringAsync())
+                .Unwrap();
         }
+
+        public Task<Document> GetCoursesAsync() {
+            var request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri("/api/courses", UriKind.Relative)
+            };
+
+            return _client.SendAsync(request)
+                .ContinueWith(x => x.Result.Content.ReadAsAsync<Document>(_formatters))
+                .Unwrap();
+        }
+    }
+
+    public class Course {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class Courses : List<Course> {
     }
 }

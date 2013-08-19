@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security;
+using Travitor.Configuration;
 
 namespace Travitor {
     public static class Extensions {
@@ -58,6 +59,14 @@ namespace Travitor {
 
         internal static void Accept(this HttpRequestHeaders self, string mediaType) {
             self.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType));
+        }
+
+        internal static void Version(this HttpRequestHeaders self, string version) {
+            self.Add("TRAVITOR-API-VERSION", version);
+        }
+
+        public static void Address(this ITravitorClientConfigurator self, string value) {
+            self.Address(new Uri(value));
         }
     }
 }
