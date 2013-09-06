@@ -69,6 +69,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JustAgile.Html">
+      <HintPath>..\packages\linqtohtml.1.0\lib\net20\JustAgile.Html.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.ActiveDirectory.Authentication, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.WindowsAzure.ActiveDirectory.Authentication.0.6.1\lib\net40\Microsoft.WindowsAzure.ActiveDirectory.Authentication.dll</HintPath>
