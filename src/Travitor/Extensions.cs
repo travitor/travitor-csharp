@@ -9,7 +9,7 @@ using System.Security;
 using Travitor.Configuration;
 
 namespace Travitor {
-    public static class Extensions {
+    public static partial class Extensions {
         internal static bool IsNotNullOrEmpty(this string self) {
             return false == string.IsNullOrEmpty(self);
         }

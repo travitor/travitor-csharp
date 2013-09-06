@@ -4,6 +4,7 @@ using Migrap.Net.Http.Formatting;
 using Migrap.Net.Http.Siren.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
@@ -11,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web;
 using Travitor.Configuration;
 
 namespace Travitor {
@@ -131,10 +133,12 @@ namespace Travitor {
             return null;
         }
 
-        public Task<string> GetStringAsync(string value = "courses") {
+        public Task<string> GetStringAsync(string value = "courses", object values = null) {
+            var uri = (null == values) ? "/api/{0}".FormatWith(value) : "/api/{0}?{1}".FormatWith(value, values.AsQuery());
+
             var request = new HttpRequestMessage {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri("/api/" + value, UriKind.Relative)
+                RequestUri = new Uri(uri, UriKind.Relative)
             };
 
             return _client.SendAsync(request)
@@ -142,15 +146,55 @@ namespace Travitor {
                 .Unwrap();
         }
 
-        public Task<Document> GetCoursesAsync() {
+        public Task<Document> GetCoursesAsync(object values = null) {
+            var uri = (null == values) ? "/api/courses" : "{0}?{1}".FormatWith("/api/courses", values.AsQuery());
+
             var request = new HttpRequestMessage {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri("/api/courses", UriKind.Relative)
+                RequestUri = new Uri(uri, UriKind.Relative)
             };
 
             return _client.SendAsync(request)
                 .ContinueWith(x => x.Result.Content.ReadAsAsync<Document>(_formatters))
                 .Unwrap();
+        }
+
+        public Task<Document> GetAssignmentsAsync(object values = null) {
+            var uri = (null == values) ? "/api/assignments" : "{0}?{1}".FormatWith("/api/assignments", values.AsQuery());
+
+            var request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(uri, UriKind.Relative)
+            };
+
+            return _client.SendAsync(request)
+                .ContinueWith(x => x.Result.Content.ReadAsAsync<Document>(_formatters))
+                .Unwrap();
+        }
+    }
+
+    public static partial class Extensions {
+        internal static string AsQuery(this object values) {
+            return (values == null) ? string.Empty : TypeDescriptor.GetProperties(values)
+                .Where(x => x.GetValue(values) != null)
+                .Select(x => string.Format("{0}={1}", HttpUtility.UrlEncode(x.Name), HttpUtility.UrlEncode(x.GetValue(values).ToString())))
+                .Join();
+        }
+
+        internal static string FormatWith(this string format, params string[] args) {
+            return string.Format(format, args);
+        }
+
+        internal static IEnumerable<PropertyDescriptor> Where(this PropertyDescriptorCollection collection, Func<PropertyDescriptor, bool> predicate) {
+            foreach (PropertyDescriptor item in collection) {
+                if (predicate(item)) {
+                    yield return item;
+                }
+            }
+        }
+
+        private static string Join(this IEnumerable<string> source, string seperator = "&") {
+            return string.Join(seperator, source);
         }
     }
 
@@ -161,5 +205,12 @@ namespace Travitor {
     }
 
     public class Courses : List<Course> {
+        public Courses()
+            : base() {
+        }
+
+        public Courses(IEnumerable<Course> collection)
+            : base(collection) {
+        }
     }
 }
