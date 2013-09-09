@@ -1,8 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens.JWT;
-using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
+﻿using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -44,17 +44,17 @@ namespace Travitor {
             }
         }
 
-        internal static IList<IdentityProviderDescriptor> GetProviders(this AuthenticationContext self, Uri targetService) {
+        internal static IList<IdentityProviderDescriptor> GetProviders(this Microsoft.WindowsAzure.ActiveDirectory.Authentication.AuthenticationContext self, Uri targetService) {
             Contract.Requires<ArgumentNullException>(targetService != null);
             return self.GetProviders(targetService.ToString());
         }
 
-        internal static AssertionCredential AcquireToken(this AuthenticationContext self, Uri targetService, IdentityProviderDescriptor identityProvider, Credential credential) {
+        internal static AssertionCredential AcquireToken(this Microsoft.WindowsAzure.ActiveDirectory.Authentication.AuthenticationContext self, Uri targetService, IdentityProviderDescriptor identityProvider, Credential credential) {
             return self.AcquireToken(targetService.ToString(), identityProvider, credential);
         }
 
-        internal static JWTSecurityToken AsSecurityToken(this AssertionCredential self) {
-            return new JWTSecurityToken(self.Assertion);
+        internal static JwtSecurityToken AsSecurityToken(this AssertionCredential self) {
+            return new JwtSecurityToken(self.Assertion);
         }
 
         internal static void Accept(this HttpRequestHeaders self, string mediaType) {

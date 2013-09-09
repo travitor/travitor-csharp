@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens.JWT;
-using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
+﻿using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
 using Migrap.Net.Http.Formatting;
 using Migrap.Net.Http.Siren.Models;
 using System;
@@ -123,6 +122,8 @@ namespace Travitor {
 
                 var token = _credential.AsSecurityToken();
                 var header = _credential.CreateAuthorizationHeader();
+
+                var claims = token.Claims.ToArray();
 
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Scheme, _credential.Assertion);
 
