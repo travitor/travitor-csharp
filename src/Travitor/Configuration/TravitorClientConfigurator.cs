@@ -18,34 +18,40 @@ namespace Travitor.Configuration {
             _settings.Username = settings.Username;
         }
 
-        public void Address(Uri value) {
+        public ITravitorClientConfigurator Address(Uri value) {
             Contract.Requires<ArgumentNullException>(value != null);
             _settings.Address = value;
+            return this;
         }
 
-        public void Tenant(Uri value) {
+        public ITravitorClientConfigurator Tenant(Uri value) {
             Contract.Requires<ArgumentNullException>(value != null);
             _settings.Tenant = value;
+            return this;
         }
 
-        public void Realm(Uri value) {
+        public ITravitorClientConfigurator Realm(Uri value) {
             Contract.Requires<ArgumentNullException>(value != null);
             _settings.Realm = value;
+            return this;
         }
 
-        public void Provider(string value) {
+        public ITravitorClientConfigurator Provider(string value) {
             Contract.Requires<ArgumentException>(value.IsNotNullOrEmpty());
             _settings.Provider = value;
+            return this;
         }
 
-        public void Username(string value) {
+        public ITravitorClientConfigurator Username(string value) {
             Contract.Requires<ArgumentException>(value.IsNotNullOrEmpty());
             _settings.Username = value;
+            return this;
         }
 
-        public void Password(string value) {
+        public ITravitorClientConfigurator Password(string value) {
             Contract.Requires<ArgumentException>(value.IsNotNullOrEmpty());
             _settings.Password = value;
+            return this;
         }
 
         public ITravitorClientSettings Settings {

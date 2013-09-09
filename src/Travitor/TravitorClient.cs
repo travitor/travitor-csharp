@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
+using System.IdentityModel.Claims;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
