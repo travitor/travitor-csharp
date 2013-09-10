@@ -1,47 +1,20 @@
 ﻿using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Web;
 using Travitor.Configuration;
+using System.Linq;
 
 namespace Travitor {
     public static partial class Extensions {
         internal static bool IsNotNullOrEmpty(this string self) {
             return false == string.IsNullOrEmpty(self);
-        }
-
-        internal static string Unsecure(this SecureString value) {
-            if (null == value) {
-                throw new ArgumentNullException("value");
-            }
-
-            IntPtr ptr = IntPtr.Zero;
-            try {
-
-                ptr = Marshal.SecureStringToGlobalAllocUnicode(value);
-                return Marshal.PtrToStringUni(ptr);
-            }
-            finally {
-                Marshal.ZeroFreeGlobalAllocUnicode(ptr);
-            }
-        }
-
-        internal static SecureString Secure(this string value) {
-            if (null == value) {
-                throw new ArgumentNullException("value");
-            }
-
-            unsafe {
-                fixed (char* chars = value) {
-                    var secure = new SecureString(chars, value.Length);
-                    secure.MakeReadOnly();
-                    return secure;
-                }
-            }
         }
 
         internal static IList<IdentityProviderDescriptor> GetProviders(this Microsoft.WindowsAzure.ActiveDirectory.Authentication.AuthenticationContext self, Uri targetService) {
@@ -67,6 +40,34 @@ namespace Travitor {
 
         public static void Address(this ITravitorClientConfigurator self, string value) {
             self.Address(new Uri(value));
+        }
+
+        internal static string AsQuery(this object values) {
+            return values.ToString();
+            //return (values == null) ? string.Empty : TypeDescriptor.GetProperties(values)
+            //    .Where(x => x.GetValue(values) != null)
+            //    .Select(x => string.Format("{0}={1}", HttpUtility.UrlEncode(x.Name), HttpUtility.UrlEncode(x.GetValue(values).ToString())))
+            //    .Join();
+        }
+
+        internal static string FormatWith(this string format, params string[] args) {
+            return string.Format(format, args);
+        }
+
+        internal static string FormatWith(this string format, params object[] args) {
+            return string.Format(format, args);
+        }
+
+        //internal static IEnumerable<PropertyDescriptor> Where(this PropertyDescriptorCollection collection, Func<PropertyDescriptor, bool> predicate) {
+        //    foreach (PropertyDescriptor item in collection) {
+        //        if (predicate(item)) {
+        //            yield return item;
+        //        }
+        //    }
+        //}
+
+        private static string Join(this IEnumerable<string> source, string seperator = "&") {
+            return string.Join(seperator, source);
         }
     }
 }

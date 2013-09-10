@@ -16,31 +16,25 @@ using Travitor;
 namespace Playground {
     class Program {
         static void Main(string[] args) {
-            var html = HDocument.Load(@"c:\courses.html");
-            var assignments = html.Descendants("a")
-               .Where(a => a.Attributes().Count() == 1 && a.Attributes().Any(x => x.Value.StartsWith("javascript:openItemBrowser")))
-               .Distinct(x => x.Attributes().First().Value)
-               .Select(x => AsAssignment(x))
-               .ToArray();
+            Task.Run(() => Run());
+            (new AutoResetEvent(false)).WaitOne();
+        }
 
-            
+        static async Task Run() {
             var travitor = TravitorClient.New(x => {
                 x.Address("http://localhost:4686/api");
             });
-            travitor.LoginAsync("michael.park", "!!urDead").Wait();
-            var text = travitor.GetStringAsync("courses").Result;
-            var json = travitor.GetStringAsync("courses", new { index = 0, count = 50 }).Result;
-            Console.WriteLine(json);
-            Console.ReadLine();
-            var document = travitor.GetCoursesAsync(new { index = 0, count = 50 }).Result;
 
-            var courses = document.Entities.AsCourses();
+            await travitor.LoginAsync("michael.park", "!!urDead");
 
-            foreach (var course in courses) {
-                Console.WriteLine("{0,-10}{1,-100}{2}", course.Id, course.Name, course.Description.Replace("\n", string.Empty));
+            var assignments = await travitor.GetAssignmentsAsync();
+            for (int i = 0; i < assignments.Entities.Count; i++) {
+                Print(assignments.Entities[i]);
             }
+        }
 
-            (new AutoResetEvent(false)).WaitOne();
+        private static void Print(Entity value) {
+            Console.WriteLine(value);
         }
 
         public static Assignment AsAssignment(HElement element) {
@@ -68,6 +62,11 @@ namespace Playground {
             var courses = entities.Select<Course>(@class);
             return new Courses(courses);
         }
+
+        //public static IEnumerable<Assignment> AsAssignments(this Entities entities, string @class = "assignment") {
+        //    var assignments = entities.Select<Assignment>(@class);
+        //    return new Assignments(assignments);
+        //}
 
         public static IEnumerable<TResult> Select<TResult>(this Entities entities, string @class) {
             return entities.Where(x => x.Class.Contains(@class))
